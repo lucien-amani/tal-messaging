@@ -170,6 +170,13 @@
 
   function toastErr(err) { window.TAL.toast(err.message + (err.fields ? ' ' + Object.values(err.fields).flat().join(' ') : ''), false); }
 
-  window.TALUI = { $, $$, h, icon, clear, fmt, pct, debounce, dateFr, opLabel, OPERATORS, STATUS, SOURCE, statusBadge, fullName,
+  /** Montant en micro-unités entières → « 1 250,00 USD » (aucun calcul flottant sur l'argent). */
+  function money(micro, cur = 'USD') {
+    const n = Number(micro); const abs = Math.abs(n);
+    const whole = Math.floor(abs / 1e6); const frac = String(abs % 1e6).padStart(6, '0').replace(/0+$/, '').padEnd(2, '0');
+    return (n < 0 ? '-' : '') + whole.toLocaleString('fr-FR') + ',' + frac + ' ' + cur;
+  }
+
+  window.TALUI = { $, $$, h, icon, clear, fmt, pct, debounce, dateFr, opLabel, money, OPERATORS, STATUS, SOURCE, statusBadge, fullName,
     modal, confirmBox, field, textInput, selectInput, pager, empty, kpi, bars, spark, toastErr };
 })();

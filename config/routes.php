@@ -24,7 +24,7 @@ return static function (Router $r): void {
     // ---- Authentifié (session + isolation multi-tenant) ----
     $r->group(['audit', 'auth', 'tenant'], function (Router $r): void {
         // Pages
-        $r->get('/', [DashboardController::class, 'home'], 'dashboard.home');
+        $r->get('/dashboard', [DashboardController::class, 'home'], 'dashboard.home');
         $r->get('/{slug:ceo|cto|operations|sales|data|support|client}', [DashboardController::class, 'show'], 'dashboard.show');
         $r->get('/security', [SecurityController::class, 'page'], 'security.page');
         $r->get('/appearance', [ThemeController::class, 'page'], 'appearance.page', ['perm:manage_appearance']);

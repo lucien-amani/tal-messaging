@@ -88,6 +88,16 @@ $orgB = $makeOrg('Démo Entreprise B', 'demo-b', 'contact@demo-b.local');
 $makeUser('owner@demo-a.local', 'owner', 'Alice', 'Owner-A', $orgA, $demoPwd, false);
 $makeUser('owner@demo-b.local', 'owner', 'Bob', 'Owner-B', $orgB, $demoPwd, false);
 
+// Un compte de démonstration par rôle (à n'activer qu'en développement : SEED_DEMO_USERS=true) pour tester chaque dashboard.
+if (filter_var(Env::get('SEED_DEMO_USERS', 'false'), FILTER_VALIDATE_BOOLEAN)) {
+    foreach (['cto' => 'CTO', 'operations_manager' => 'Ops', 'sales_cs' => 'Sales', 'data_compliance' => 'Data', 'support_agent' => 'Support'] as $role => $label) {
+        $makeUser($role . '@talmessaging.local', $role, $label, 'Demo', null, $demoPwd, false);
+    }
+    foreach (['admin' => 'Admin', 'campaign_manager' => 'Campaign', 'developer' => 'Developer', 'viewer' => 'Viewer'] as $role => $label) {
+        $makeUser($role . '@demo-a.local', $role, $label, 'Demo-A', $orgA, $demoPwd, false);
+    }
+}
+
 echo "Seed terminé.\n";
 if ($created) {
     echo "=== IDENTIFIANTS (affichés une seule fois) ===\n";

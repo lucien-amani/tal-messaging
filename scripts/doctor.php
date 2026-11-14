@@ -80,7 +80,7 @@ if ($page === null) {
 } else {
     $cookie = null;
     foreach ($hdr as $h) {
-        if (stripos($h, 'Set-Cookie: tal_sid=') === 0) {
+        if (stripos($h, 'Set-Cookie: tal_session=') === 0) {
             $cookie = trim(explode(';', substr($h, 12))[0]);
         }
     }

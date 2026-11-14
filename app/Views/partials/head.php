@@ -7,7 +7,8 @@ $theme = ThemeService::settings();
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="csrf-token" content="<?= e($csrf) ?>">
 <meta name="base-url" content="<?= e(base_url()) ?>">
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="<?= !empty($indexable) ? 'index,follow' : 'noindex,nofollow' ?>">
+<?php if (!empty($description)): ?><meta name="description" content="<?= e($description) ?>"><?php endif; ?>
 <meta name="color-scheme" content="light dark">
 <title><?= e($title ?? 'TAL Messaging') ?> · TAL Messaging</title>
 <link rel="stylesheet" href="<?= e(url('theme.css')) ?>?v=<?= e(substr(md5(ThemeService::css()), 0, 8)) ?>">

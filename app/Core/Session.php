@@ -5,6 +5,8 @@ namespace App\Core;
 
 final class Session
 {
+    // Nom neuf : évite les anciens cookies « tal_sid » (autre chemin) qui masquaient la session courante.
+    public const NAME = 'tal_session';
     private static bool $started = false;
 
     public static function isSecureTransport(): bool
@@ -21,7 +23,7 @@ final class Session
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
         ini_set('session.use_trans_sid', '0');
-        session_name('tal_sid');
+        session_name(self::NAME);
         session_set_cookie_params([
             'lifetime' => 0,
             'path' => base_url() !== '' ? base_url() : '/',
@@ -29,6 +31,11 @@ final class Session
             'httponly' => true,
             'samesite' => 'Lax',
         ]);
+        if (isset($_COOKIE['tal_sid']) && !headers_sent()) {
+            foreach (array_unique(['/', base_url() !== '' ? base_url() : '/']) as $path) {
+                setcookie('tal_sid', '', ['expires' => 1, 'path' => $path, 'httponly' => true, 'samesite' => 'Lax']);
+            }
+        }
         session_set_save_handler(new DbSessionHandler(), true);
         try {
             $ok = @session_start();

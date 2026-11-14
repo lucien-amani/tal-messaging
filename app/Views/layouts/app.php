@@ -23,7 +23,7 @@ $canAppearance = in_array('manage_appearance', $user['permissions'], true);
   <!-- Sidebar -->
   <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-line bg-surface transition-all duration-200 md:static md:z-auto md:w-64 md:translate-x-0">
     <div class="brand-row flex h-16 shrink-0 items-center justify-between gap-2 px-5">
-      <a href="<?= e(url('/')) ?>" class="flex items-center gap-2.5">
+      <a href="<?= e(url('/dashboard')) ?>" class="flex items-center gap-2.5">
         <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-brandfg"><?= icon('send', 'text-lg') ?></span>
         <span class="collapsible font-display text-[17px] font-bold tracking-tight">TAL Messaging</span>
       </a>
@@ -48,6 +48,52 @@ $canAppearance = in_array('manage_appearance', $user['permissions'], true);
           <a href="<?= e(url('/contacts/groups')) ?>" class="nav-item" title="Groupes" <?= $sect === 'groups' ? 'aria-current="page"' : '' ?>><?= icon('users-group') ?><span class="collapsible">Groupes</span></a>
           <a href="<?= e(url('/contacts/segments')) ?>" class="nav-item" title="Segments" <?= $sect === 'segments' ? 'aria-current="page"' : '' ?>><?= icon('filter') ?><span class="collapsible">Segments</span></a>
           <a href="<?= e(url('/contacts/imports')) ?>" class="nav-item" title="Imports CSV" <?= $sect === 'imports' ? 'aria-current="page"' : '' ?>><?= icon('file-import') ?><span class="collapsible">Imports CSV</span></a>
+        </div>
+      <?php endif; ?>
+
+      <?php if (array_intersect(['view_sender_ids', 'view_messages', 'send_messages', 'view_campaigns', 'view_wallet', 'manage_providers', 'manage_api_keys'], $user['permissions'])): ?>
+        <p class="nav-title">Messagerie</p>
+        <div class="space-y-1">
+          <?php if (in_array('send_messages', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/messages/quick-send')) ?>" class="nav-item" title="Quick Send" <?= ($section ?? '') === 'quick_send' ? 'aria-current="page"' : '' ?>><?= icon('send') ?><span class="collapsible">Quick Send</span></a>
+          <?php endif; ?>
+          <?php if (in_array('view_campaigns', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/campaigns')) ?>" class="nav-item" title="Campagnes" <?= ($section ?? '') === 'campaigns' ? 'aria-current="page"' : '' ?>><?= icon('speakerphone') ?><span class="collapsible">Campagnes</span></a>
+          <?php endif; ?>
+          <?php if (in_array('view_messages', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/messages')) ?>" class="nav-item" title="Message Center" <?= ($section ?? '') === 'messages' ? 'aria-current="page"' : '' ?>><?= icon('messages') ?><span class="collapsible">Message Center</span></a>
+          <?php endif; ?>
+          <?php if (in_array('view_wallet', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/billing')) ?>" class="nav-item" title="Wallet" <?= in_array(($section ?? ''), ['billing', 'pricing'], true) ? 'aria-current="page"' : '' ?>><?= icon('wallet') ?><span class="collapsible">Wallet</span></a>
+          <?php endif; ?>
+          <?php if (in_array('manage_api_keys', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/developer')) ?>" class="nav-item" title="API Developer Center" <?= ($section ?? '') === 'developer' ? 'aria-current="page"' : '' ?>><?= icon('code') ?><span class="collapsible">API Developer</span></a>
+          <?php endif; ?>
+          <?php if (in_array('manage_providers', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/providers')) ?>" class="nav-item" title="Fournisseurs" <?= ($section ?? '') === 'providers' ? 'aria-current="page"' : '' ?>><?= icon('plug-connected') ?><span class="collapsible">Fournisseurs</span></a>
+          <?php endif; ?>
+          <?php if (in_array('view_sender_ids', $user['permissions'], true)): ?>
+            <a href="<?= e(url('/sender-ids')) ?>" class="nav-item" title="Sender IDs" <?= ($section ?? '') === 'sender_ids' ? 'aria-current="page"' : '' ?>><?= icon('id-badge-2') ?><span class="collapsible">Sender IDs</span></a>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if (array_intersect(['view_all_tenants', 'manage_crm', 'create_tickets', 'manage_tickets', 'manage_team'], $user['permissions'])): ?>
+        <?php $sect = $section ?? ''; $up = $user['permissions']; ?>
+        <p class="nav-title">Gestion</p>
+        <div class="space-y-1">
+          <?php if (in_array('view_all_tenants', $up, true) && in_array('view_organization', $up, true)): ?>
+            <a href="<?= e(url('/clients')) ?>" class="nav-item" title="Clients" <?= $sect === 'clients' ? 'aria-current="page"' : '' ?>><?= icon('building') ?><span class="collapsible">Clients</span></a>
+          <?php endif; ?>
+          <?php if (in_array('manage_crm', $up, true)): ?>
+            <a href="<?= e(url('/pipeline')) ?>" class="nav-item" title="Pipeline" <?= $sect === 'pipeline' ? 'aria-current="page"' : '' ?>><?= icon('briefcase') ?><span class="collapsible">Pipeline</span></a>
+          <?php endif; ?>
+          <?php if (in_array('manage_tickets', $up, true) || in_array('create_tickets', $up, true)): ?>
+            <a href="<?= e(url('/tickets')) ?>" class="nav-item" title="Assistance" <?= $sect === 'tickets' ? 'aria-current="page"' : '' ?>><?= icon('headset') ?><span class="collapsible"><?= in_array('manage_tickets', $up, true) ? 'Tickets support' : 'Assistance' ?></span></a>
+          <?php endif; ?>
+          <?php if (in_array('manage_team', $up, true)): ?>
+            <a href="<?= e(url('/team')) ?>" class="nav-item" title="Équipe" <?= $sect === 'team' ? 'aria-current="page"' : '' ?>><?= icon('users') ?><span class="collapsible">Équipe</span></a>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
 

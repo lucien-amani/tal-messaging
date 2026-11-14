@@ -41,7 +41,8 @@ final class DashboardController extends Controller
             }
         }
         $extra = [];
-        $template = 'dashboards/placeholder';
+        $template = 'dashboards/home';
+        $extra = ['scripts' => ['js/ui.js', 'js/dashboard.js'], 'global' => \App\Tenancy\TenantContext::current()->global];
         if ($slug === 'data') {
             $template = 'dashboards/data';
             $extra = \App\Modules\Contacts\Controllers\DataController::dashboardData($request) + [

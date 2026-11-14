@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Middleware\AnyPermissionMiddleware;
+use App\Middleware\ApiKeyMiddleware;
 use App\Middleware\AuditMiddleware;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
@@ -65,7 +67,9 @@ final class App
         };
 
         // theme.css est publique et sans état : elle ne doit jamais toucher à la session.
-        $stack = $route['name'] === 'theme.css' ? $route['mw'] : array_merge(['session'], $route['mw']);
+        // Sans état : feuille de style, webhooks des fournisseurs et API publique (clé API) ne créent jamais de session.
+        $stateless = $route['name'] === 'theme.css' || str_starts_with((string) $route['name'], 'webhook.') || str_starts_with((string) $route['name'], 'api_v1.');
+        $stack = $stateless ? $route['mw'] : array_merge(['session'], $route['mw']);
         $pipeline = array_reduce(
             array_reverse($stack),
             fn(callable $next, string $spec): callable => fn(Request $r): Response => $this->resolve($spec)->handle($r, $next),
@@ -84,6 +88,8 @@ final class App
             'csrf' => new CsrfMiddleware(),
             'guest' => new GuestMiddleware(),
             'audit' => new AuditMiddleware(),
+            'any' => new AnyPermissionMiddleware(array_filter(explode(',', $args))),
+            'apikey' => new ApiKeyMiddleware(array_filter(explode(',', $args))),
             'perm' => new PermissionMiddleware(array_filter(explode(',', $args))),
             default => throw new \LogicException('Middleware inconnu : ' . $alias),
         };
